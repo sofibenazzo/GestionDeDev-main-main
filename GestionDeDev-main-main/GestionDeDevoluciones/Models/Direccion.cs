@@ -7,13 +7,14 @@ namespace GestionDeDevoluciones.Models
         [Key]
         public int DireccionId { get; set; }
 
-        [Required, StringLength(100)]
-        public string Calle { get; set; } = string.Empty;
+        // ✅ CORREGIDO: todos opcionales, sin [Required]
+        [StringLength(100)]
+        public string? Calle { get; set; }
 
-        [Required, StringLength(10)]
-        public string Numero { get; set; } = string.Empty;
+        [StringLength(10)]
+        public string? Numero { get; set; }
 
-        [Required, StringLength(80)]
-        public string Ciudad { get; set; } = string.Empty;
+        [StringLength(80)]
+        public string? Ciudad { get; set; }
     }
 }

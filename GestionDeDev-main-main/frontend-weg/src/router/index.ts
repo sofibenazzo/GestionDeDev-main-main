@@ -21,6 +21,8 @@ const router = createRouter({
       component: DashboardView,
       meta: { requiresAuth: true }
     },
+    // IMPORTANTE: /returns/new DEBE ir antes de /returns/:id
+    // si no, "new" se interpreta como un id
     {
       path: '/returns/new',
       name: 'new-return',
@@ -39,12 +41,7 @@ const router = createRouter({
       component: () => import('../views/ReturnsListView.vue'),
       meta: { requiresAuth: true }
     },
-    {
-      path: '/clients',
-      name: 'clients',
-      component: () => import('../views/ClientsListView.vue'),
-      meta: { requiresAuth: true }
-    },
+    // IMPORTANTE: /clients/new DEBE ir antes de /clients/:id
     {
       path: '/clients/new',
       name: 'new-client',
@@ -58,9 +55,27 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/clients',
+      name: 'clients',
+      component: () => import('../views/ClientsListView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/products',
       name: 'products',
       component: () => import('../views/ProductsListView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/products/new',
+      name: 'new-product',
+      component: () => import('../views/ProductFormView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/products/edit/:id',
+      name: 'edit-product',
+      component: () => import('../views/ProductFormView.vue'),
       meta: { requiresAuth: true }
     },
     {
@@ -80,7 +95,7 @@ const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   const auth = useAuth()
-  auth.checkAuth() // Verify if session exists in localStorage
+  auth.checkAuth()
 
   if (to.meta.requiresAuth && !auth.isAuthenticated.value) {
     next('/login')

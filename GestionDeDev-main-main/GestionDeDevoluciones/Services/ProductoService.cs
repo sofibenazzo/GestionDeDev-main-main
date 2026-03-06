@@ -29,5 +29,21 @@ namespace GestionDeDevoluciones.Services
             _context.Productos.Add(producto);
             _context.SaveChanges();
         }
+
+        public void Actualizar(Producto producto)
+        {
+            _context.Productos.Update(producto);
+            _context.SaveChanges();
+        }
+
+        public void Eliminar(int id)
+        {
+            var p = _context.Productos.Find(id);
+            if (p != null)
+            {
+                _context.Productos.Remove(p);
+                _context.SaveChanges();
+            }
+        }
     }
 }

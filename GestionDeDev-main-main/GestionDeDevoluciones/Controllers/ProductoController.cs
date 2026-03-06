@@ -35,5 +35,20 @@ namespace GestionDeDevoluciones.Backend.Controllers
             _service.Crear(producto);
             return Ok(producto);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] Producto producto)
+        {
+            if (id != producto.ProductoId) return BadRequest();
+            _service.Actualizar(producto);
+            return Ok(producto);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _service.Eliminar(id);
+            return Ok();
+        }
     }
 }

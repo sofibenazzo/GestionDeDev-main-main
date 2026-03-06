@@ -14,6 +14,9 @@ namespace GestionDeDevoluciones.Data
                 // context.Database.EnsureDeleted(); // COMENTADO para evitar pérdida de datos
                 context.Database.EnsureCreated();
                 
+                try { context.Database.ExecuteSqlRaw("ALTER TABLE Observaciones ADD Descripcion nvarchar(500) DEFAULT '' NOT NULL"); } catch {}
+                try { context.Database.ExecuteSqlRaw("ALTER TABLE DecisionesAdoptadas ADD Descripcion nvarchar(max) DEFAULT '' NOT NULL"); } catch {}
+
                 if (!context.Roles.Any())
                 {
                     context.Roles.AddRange(new List<Rol> { new Rol { Nombre = "Administrador" }, new Rol { Nombre = "Usuario" } });

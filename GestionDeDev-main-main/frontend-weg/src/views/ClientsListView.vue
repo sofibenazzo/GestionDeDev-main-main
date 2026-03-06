@@ -7,7 +7,7 @@ import { useAuth } from "../store/auth";
 
 const searchQuery = ref("");
 const loading = ref(true);
-const clients = ref([]);
+const clients = ref<any[]>([]);  // ✅ CORREGIDO: tipado explícito
 const auth = useAuth();
 
 onMounted(async () => {
@@ -27,7 +27,7 @@ const filteredClients = computed(() => {
   return clients.value.filter(
     (cli: any) =>
       cli.razonSocial.toLowerCase().includes(query) ||
-      cli.codigoCliente.toLowerCase().includes(query) ||
+      cli.codigoCliente?.toLowerCase().includes(query) ||
       cli.direccion?.ciudad?.toLowerCase().includes(query)
   );
 });
@@ -61,9 +61,7 @@ const filteredClients = computed(() => {
         <!-- Search & Filter Bar -->
         <div class="flex flex-col md:flex-row items-center justify-between border-b border-slate-50 bg-white/50 p-8 gap-4">
           <div class="relative group w-full md:w-96">
-            <Search
-              class="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-focus-within:text-[#005792] transition-colors"
-            />
+            <Search class="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-focus-within:text-[#005792] transition-colors" />
             <input
               v-model="searchQuery"
               type="text"
@@ -71,11 +69,9 @@ const filteredClients = computed(() => {
               class="w-full rounded-2xl border border-slate-100 bg-slate-50/50 py-4 pl-12 pr-6 text-sm font-bold text-slate-900 outline-none focus:border-[#005792] focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all"
             />
           </div>
-          
+
           <div class="flex items-center gap-3 w-full md:w-auto">
-            <button
-              class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-slate-100 bg-white px-6 py-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all font-black text-[10px] uppercase tracking-widest"
-            >
+            <button class="flex-1 md:flex-none flex items-center justify-center gap-2 rounded-xl border border-slate-100 bg-white px-6 py-4 text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all font-black text-[10px] uppercase tracking-widest">
               <Filter class="h-4 w-4" />
               Parámetros
             </button>
@@ -86,7 +82,7 @@ const filteredClients = computed(() => {
           </div>
         </div>
 
-        <!-- Table View -->
+        <!-- Table -->
         <div class="overflow-x-auto">
           <table class="w-full text-left">
             <thead>
@@ -104,7 +100,8 @@ const filteredClients = computed(() => {
                 class="group hover:bg-blue-50/30 transition-all cursor-pointer"
                 @click="$router.push(`/clients/${client.clienteId}`)"
               >
-                <td class="py-8 px-10">
+                <!-- Razón Social -->
+                <td class="py-8 px-8">
                   <div class="flex items-center gap-5">
                     <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:ring-[#005792]/30 transition-all">
                       <Building2 class="h-5 w-5 text-[#005792]" />
@@ -114,32 +111,38 @@ const filteredClients = computed(() => {
                         {{ client.razonSocial }}
                       </p>
                       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        Identificador: {{ client.codigoCliente }}
+                        ID: {{ client.clienteId }}
                       </p>
                     </div>
                   </div>
                 </td>
+
+                <!-- ✅ CORREGIDO: Código Cliente en su columna correcta -->
+                <td class="py-8 px-4">
+                  <span class="text-sm font-bold text-slate-700">
+                    {{ client.codigoCliente || '—' }}
+                  </span>
+                </td>
+
+                <!-- Ciudad -->
                 <td class="py-8 px-4">
                   <div class="flex items-center gap-2 text-slate-500">
                     <MapPin class="h-3.5 w-3.5" />
-                    <span class="text-xs font-bold">{{ client.direccion?.ciudad || "Sin Localidad" }}</span>
+                    <span class="text-xs font-bold">{{ client.direccion?.ciudad || '—' }}</span>
                   </div>
-                  <p class="mt-1 text-[10px] font-medium text-slate-400 italic">
-                    {{ client.direccion?.calle }} {{ client.direccion?.numero }}
+                  <p v-if="client.direccion?.calle" class="mt-1 text-[10px] font-medium text-slate-400 italic">
+                    {{ client.direccion.calle }} {{ client.direccion.numero }}
                   </p>
                 </td>
-                <td class="py-8 px-4">
-                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-600 ring-1 ring-emerald-100">
-                    Activo
-                  </span>
-                </td>
+
+                <!-- Acciones -->
                 <td class="py-8 pr-10 text-right">
                   <div class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-900/10 transition-all group-hover:scale-110 group-hover:bg-[#005792] active:scale-95">
                     <ChevronRight class="h-5 w-5" />
                   </div>
                 </td>
               </tr>
-              
+
               <tr v-if="filteredClients.length === 0 && !loading">
                 <td colspan="4" class="py-20 text-center">
                   <div class="flex flex-col items-center gap-4 text-slate-300">

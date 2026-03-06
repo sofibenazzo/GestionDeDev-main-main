@@ -11,13 +11,13 @@ namespace GestionDeDevoluciones.Models
         [Required, StringLength(150)]
         public string RazonSocial { get; set; } = string.Empty;
 
-        [Required, StringLength(50)]
-        public string CodigoCliente { get; set; } = string.Empty;
+        // ✅ CORREGIDO: opcional, sin [Required]
+        [StringLength(50)]
+        public string? CodigoCliente { get; set; }
 
-        // FK explícita
-        public int DireccionId { get; set; }
+        // ✅ CORREGIDO: FK nullable, la dirección es opcional
+        public int? DireccionId { get; set; }
 
-        // Navegación
         public Direccion? Direccion { get; set; }
     }
 }

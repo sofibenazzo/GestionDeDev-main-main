@@ -22,13 +22,14 @@ namespace GestionDeDevoluciones.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
+            // ✅ CORREGIDO: IsRequired(false) porque DireccionId ahora es nullable
             modelBuilder.Entity<Cliente>()
                 .HasOne(c => c.Direccion)
                 .WithOne()
                 .HasForeignKey<Cliente>(c => c.DireccionId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
-
 
             modelBuilder.Entity<Remito>()
                 .HasOne(r => r.Cliente)
